@@ -5,19 +5,23 @@ using UnityEngine;
 public class Patrol : MonoBehaviour
 {
     [SerializeField] Transform[] waypoints;
+    [SerializeField] private float attackRange = 1f;
     [SerializeField] float Speed;
+    [SerializeField] private Rigidbody rbEnemy; 
     [SerializeField] float RangeOfView =10f;
     [SerializeField] float minmunDistance;
     [SerializeField] float rotationSpeed;
     [SerializeField] GameObject Hero;
     [SerializeField] private Animator animEnemy;
-    public bool IseeYou = false;
+    public bool IseeYou ;
+    public bool isAttack;
     private bool goBack = false;
     private int currentIndex;
         // Start is called before the first frame update
     void Start()
     {
-        
+        Hero = GameObject.Find("Hero");
+        rbEnemy = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -25,25 +29,21 @@ public class Patrol : MonoBehaviour
     {
        if(Vector3.Distance(transform.position, Hero.transform.position) <= RangeOfView)
         {
-            IseeYou = true;                              
+            IseeYou = true;
+            animEnemy.SetBool("isRun", true);                              
         }
         else
         {
-            IseeYou = false;
+             IseeYou = false;
+             MovementPatrol(); 
+             animEnemy.SetBool("isRun", false);  
         }
 
         if(IseeYou)
         {
-            ChaseCharacter();
-            animEnemy.SetBool("isRun", true);
-
+            Attack();
         }
-        else
-        {
-            MovementPatrol();   
-            animEnemy.SetBool("isRun", false);
-
-        }            
+        
     }
     void MovementPatrol()
     {
@@ -76,7 +76,7 @@ public class Patrol : MonoBehaviour
     }
 
  
-    private void ChaseCharacter()
+  private void ChaseCharacter()
     {
        // Debug.Log("ENTRO EN AREA");
         Vector3 direction =(Hero.transform.position - transform.position).normalized;
@@ -85,16 +85,25 @@ public class Patrol : MonoBehaviour
         
     }
     
-    private void OnCollisionEnter(Collision collision)
+       private void Attack()
     {
-        if(collision.gameObject.CompareTag("Player"))
+        Vector3 playerDirection = GetPlayerDirection();
+        if(playerDirection.magnitude <= attackRange)
         {
-        Debug.Log("Jugador Herido");
-        //GameManager.instance.addScore();
-        //Debug.Log(GameManager.instance.getScore());
-        //Destroy(gameObject);
+            animEnemy.SetBool("isAttack", true);
+            rbEnemy.rotation = Quaternion.LookRotation(new Vector3(playerDirection.x, 0, playerDirection.z));
+            rbEnemy.AddForce(playerDirection.normalized * Speed, ForceMode.Impulse);
         }
+        else
+        {
+            animEnemy.SetBool("isAttack", false);
+        }
+        
+    }
 
+    private Vector3 GetPlayerDirection()
+    {
+        return (Hero.transform.position - transform.position).normalized;
     }
     private void OnDrawGizmos()
     {

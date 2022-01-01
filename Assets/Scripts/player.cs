@@ -39,6 +39,10 @@ public class player : MonoBehaviour
       {
          Atack();
       }
+       if(Input.GetKeyDown(KeyCode.Mouse1))
+      {
+         Atack2();
+      }
 
         
       if(Input.GetKeyDown(KeyCode.Q)&&qTimer <= 0) 
@@ -131,6 +135,10 @@ private void OnCollisionExit(Collision other)
   private void Atack()
   {
      anim.SetTrigger("Atack");
+  }
+    private void Atack2()
+  {
+     anim.SetTrigger("Atack2");
   }
 }
 
