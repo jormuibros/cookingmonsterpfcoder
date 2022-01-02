@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyControler : MonoBehaviour
 {   [SerializeField] private float speedEnemy  = 1f;
+    [SerializeField] private float speedWaypoint  = 1f;
     [SerializeField] Transform[] waypoints;
     [SerializeField] float RangeOfView =10f;
     private bool goBack = false;
@@ -82,7 +83,7 @@ public class EnemyControler : MonoBehaviour
         Vector3 direction = deltaVector.normalized;
         
         transform.forward = Vector3.Lerp(transform.forward, direction, rotationSpeed * Time.deltaTime);
-        transform.position += transform.forward * speedEnemy * Time.deltaTime;
+        transform.position += transform.forward * speedWaypoint * Time.deltaTime;
         
         float distance = deltaVector.magnitude;
         
