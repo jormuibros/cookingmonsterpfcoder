@@ -3,20 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyControler : MonoBehaviour
-{   [SerializeField] private float speedEnemy  = 1f;
-    [SerializeField] private float speedWaypoint  = 1f;
+{   
+    [SerializeField] private EnemyData enemyData;
+    [SerializeField] private HeroData heroData;
+    [SerializeField] private int enemyHP;
     [SerializeField] Transform[] waypoints;
-    [SerializeField] float RangeOfView =10f;
     private bool goBack = false;
     private int currentIndex;
     public bool IseeYou ;
-    [SerializeField] float minmunDistance;
-    [SerializeField] float rotationSpeed;
-    [SerializeField] private float attackRange = 3f;
     public GameObject player;
     public Rigidbody rbEnemy;
     public Animator  animEnemy;
-
     private bool isAttack;
 
     void Start()
@@ -29,7 +26,7 @@ public class EnemyControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-     if(Vector3.Distance(transform.position, player.transform.position) <= RangeOfView)
+     if(Vector3.Distance(transform.position, player.transform.position) <= enemyData.EnemyRangeOfView)
         {
             IseeYou = true;
         }
@@ -37,16 +34,17 @@ public class EnemyControler : MonoBehaviour
         {
              IseeYou = false;
         }
+
     }
 
-    private void Attack()
+    public virtual void Attack()
     {
         Vector3 playerDirection = GetPlayerDirection();
-        if(playerDirection.magnitude > attackRange)
+        if(playerDirection.magnitude > enemyData.EnemyAttackRange)
         {
             animEnemy.SetBool("isAttack", false);
             rbEnemy.rotation = Quaternion.LookRotation(new Vector3(playerDirection.x, 0, playerDirection.z));
-            rbEnemy.AddForce(playerDirection.normalized * speedEnemy, ForceMode.Impulse);
+            rbEnemy.AddForce(playerDirection.normalized * enemyData.EnemySpeed, ForceMode.Impulse);
         }
         else
         {
@@ -55,11 +53,11 @@ public class EnemyControler : MonoBehaviour
         
     }
 
-    private Vector3 GetPlayerDirection()
+    public virtual Vector3 GetPlayerDirection()
     {
         return player.transform.position - transform.position;
     }
-        private void OnDrawGizmos()
+        public virtual void OnDrawGizmos()
     {
         if(IseeYou == true)
         {
@@ -74,7 +72,7 @@ public class EnemyControler : MonoBehaviour
             Gizmos.color = Color.cyan;
         }
 
-        Gizmos.DrawWireSphere(transform.position, RangeOfView);
+        Gizmos.DrawWireSphere(transform.position, enemyData.EnemyRangeOfView);
     }
         void MovementPatrol()
     {
@@ -82,12 +80,12 @@ public class EnemyControler : MonoBehaviour
         Vector3 deltaVector = waypoints[currentIndex].position - transform.position;
         Vector3 direction = deltaVector.normalized;
         
-        transform.forward = Vector3.Lerp(transform.forward, direction, rotationSpeed * Time.deltaTime);
-        transform.position += transform.forward * speedWaypoint * Time.deltaTime;
+        transform.forward = Vector3.Lerp(transform.forward, direction, enemyData.EnemyRotationSpeed * Time.deltaTime);
+        transform.position += transform.forward * enemyData.EnemySpeedWaypoint * Time.deltaTime;
         
         float distance = deltaVector.magnitude;
         
-        if(distance < minmunDistance )
+        if(distance < enemyData.EnemyMinimunDistance )
         {
           if(currentIndex >= waypoints.Length -1)
             {
@@ -104,6 +102,26 @@ public class EnemyControler : MonoBehaviour
             else currentIndex--;
         }
         
+    }
+
+   public virtual void OnTriggerEnter(Collider other) 
+    {
+     if (other.gameObject.CompareTag("HeroFist")) 
+        {
+           enemyHP -= heroData.HeroPrimaryDamage;
+           Debug.Log("Heroe pega");
+        }
+       if (other.gameObject.CompareTag("HeroFoot"))
+        {
+           enemyHP -= heroData.HeroSecondaryDamage;
+           Debug.Log("Heroe patea");
+        }
+        if(enemyHP < 0)
+           {
+            Destroy(gameObject);
+           }
+
+
     }
 
 }

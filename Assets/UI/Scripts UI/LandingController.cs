@@ -34,7 +34,7 @@ public class LandingController : MonoBehaviour
 
     public void OnClickPlay()
     {
-        SceneManager.LoadSceneAsync("SampleScene");
+        SceneManager.LoadSceneAsync("Dungeon01_Floor01");
     }
 
     public void onGameOverHandler()
