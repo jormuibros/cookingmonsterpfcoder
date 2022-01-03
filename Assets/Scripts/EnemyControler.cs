@@ -119,6 +119,8 @@ public class EnemyControler : MonoBehaviour
         if(enemyHP < 0)
            {
             Destroy(gameObject);
+            GameManager.instance.addScore();
+            Debug.Log(GameManager.instance.getScore());
            }
 
 

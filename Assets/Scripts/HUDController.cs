@@ -6,10 +6,10 @@ using TMPro;
 
 public class HUDController : MonoBehaviour
 {
-    [SerializeField] private Text textPeach;
-    [SerializeField] private Text textWatermelon;
-    [SerializeField] private Text textApple;
-    [SerializeField] private Text textGold;
+    [SerializeField] private TextMeshProUGUI textPeach;
+    [SerializeField] private TextMeshProUGUI textWatermelon;
+    [SerializeField] private TextMeshProUGUI textApple;
+    [SerializeField] private TextMeshProUGUI textGold;
     [SerializeField] private TextMeshProUGUI textLives;
 
     [SerializeField] private TextMeshProUGUI textScore;
@@ -23,7 +23,7 @@ public class HUDController : MonoBehaviour
     
     void Awake()
     {
-       //PlayerController.onLivesChange += onLivesChangeHandler;
+       playerController.onLivesChange += onLivesChangeHandler;
        GameManager.onPointsInScreen += onUpdateScoreHandler;
     }
     
@@ -39,7 +39,7 @@ public class HUDController : MonoBehaviour
 
     public void onUpdateScoreHandler(int points)
     {
-        textScore.text = "Score " + points;
+        textScore.text = "Monstruos Eliminados " + points;
     }
 
     // Update is called once per frame

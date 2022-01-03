@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: SkeletonData
   m_EditorClassIdentifier: 
   enemyName: 
-  enemyAttackDamage: 0
-  enemySpeed: 1
+  enemyAttackDamage: 4
+  enemySpeed: 0.4
   enemySpeedWaypoint: 1
   enemyRangeOfView: 10
   enemyMinimunDistance: 1
   enemyRotationSpeed: 1
   enemyAttackRange: 3
-  enemyLifePoints: 0
+  enemyLifePoints: 50

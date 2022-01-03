@@ -19,5 +19,5 @@ MonoBehaviour:
   enemyRangeOfView: 4
   enemyMinimunDistance: 1
   enemyRotationSpeed: 1
-  enemyAttackRange: 4
-  enemyLifePoints: 0
+  enemyAttackRange: 1
+  enemyLifePoints: 25

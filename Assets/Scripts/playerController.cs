@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System;
 
 public class playerController : MonoBehaviour
 {
@@ -20,6 +22,14 @@ public class playerController : MonoBehaviour
     private float ySpeed;
     private int temporizador =0;
     [SerializeField] private GameObject Door;
+    
+    [SerializeField] private GameObject Bottle_Health;
+    private InventoryManager mgInventory;
+    [SerializeField] private Slider lifeBar;
+    
+    //events
+    public static event Action onDeath;
+    public static event Action<int> onLivesChange;
     void Start()
     {
        heroInitialSpeed = heroSpeed;
@@ -29,14 +39,41 @@ public class playerController : MonoBehaviour
        jump = false;
        anim = GetComponent<Animator>();
        rb = GetComponent<Rigidbody>();
-       
+       mgInventory = GetComponent<InventoryManager>();    
+       onLivesChange?.Invoke(heroHP); 
     }
 
     void Update()
-    {
-      Move();     
+    {     
+      //Move();
       //Jump();
-       if(Input.GetKeyDown(KeyCode.Mouse0))
+      GameOver();
+
+        if (Input.GetKeyDown(KeyCode.Z) && mgInventory.InventoryOneHas())
+        {
+            UseItem();
+            heroHP += 1;  
+        }
+
+        if (Input.GetKeyDown(KeyCode.X) && mgInventory.InventoryTwoHas())
+        {
+            UseItem();
+            heroHP += 1;  
+        }
+
+        if (Input.GetKeyDown(KeyCode.C) && mgInventory.InventoryThreeHas())
+        {
+            UseItem();
+            heroHP += 1; 
+        }
+        
+        lifeBar.GetComponent<Slider>().value = heroHP;
+    }
+
+    private void FixedUpdate()
+    {
+        Move();
+        if(Input.GetKeyDown(KeyCode.Mouse0))
       {
          Atack();
       }
@@ -59,7 +96,6 @@ public class playerController : MonoBehaviour
       {
        qTimer-= Time.deltaTime; 
       }
-
     }
 
     public void Move()
@@ -145,26 +181,54 @@ private void OnCollisionExit(Collision other)
      public void OnTriggerEnter(Collider other) 
     {
     
-     if (other.gameObject.CompareTag("EnemyWeapon")) 
+        if (other.gameObject.CompareTag("EnemyWeapon")) 
         {
            heroHP -= enemyData.EnemyAttackDamage;
            Debug.Log("Monstruo Pega");
+           onLivesChange?.Invoke(heroHP);
+        }
+        if (other.gameObject.CompareTag("Lever"))
+        {
+            temporizador ++;
         }
     
-    if(heroHP < 0)
-           {
-            Destroy(gameObject);
-           }
-    if (other.gameObject.CompareTag("Lever"))
-    {
-        temporizador ++;
+        if(temporizador > 2)
+        {
+            Debug.Log("PUERTA DESTRUIDA");
+            Destroy(Door.gameObject);   
+        }  
+        if (other.gameObject.CompareTag("Food"))
+        {
+            Debug.Log("food");
+            GameObject food = other.gameObject;
+            food.SetActive(false);
+            mgInventory.AddInventoryFour(food.name, food);
+            mgInventory.SeeInventoryFour();
+            mgInventory.CountFood(food);
+        }              
+
+        if(other.gameObject.CompareTag("Potion"))
+        {
+            heroHP = heroHP + 10;
+            Destroy(Bottle_Health.gameObject);
+            Debug.Log("POCIÓN DESTRUIDA");
+            onLivesChange?.Invoke(heroHP);
+        }
     }
-    
-    if(temporizador > 2)
+
+    private void GameOver()
     {
-      Debug.Log("PUERTA DESTRUIDA");
-      Destroy(Door.gameObject);   
+        if(heroHP <= 0)
+        {
+            onDeath?.Invoke();
+            Debug.Log("Player Died");
+        }
     }
+   private void UseItem()
+    {
+        GameObject food = mgInventory.GetInventoryFour("food");
+        food.SetActive(true);
+        food.transform.position = transform.position + new Vector3(1f,.1f,.1f);
     }
 
 }

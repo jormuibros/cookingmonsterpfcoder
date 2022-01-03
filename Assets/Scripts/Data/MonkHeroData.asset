@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heroName: Andros
   heroLife: 100
-  heroPrimaryDamage: 1
-  heroSecondaryDamage: 2
+  heroPrimaryDamage: 5
+  heroSecondaryDamage: 8
   heroRunSpeed: 10
   heroSpeedRotation: 100
   heroJumpforce: 8

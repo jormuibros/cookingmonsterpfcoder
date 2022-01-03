@@ -10,7 +10,7 @@ public class LandingController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-      //PlayerController.onDeath += onGameOverHandler;  
+      playerController.onDeath += onGameOverHandler;  
     }
 
     // Update is called once per frame

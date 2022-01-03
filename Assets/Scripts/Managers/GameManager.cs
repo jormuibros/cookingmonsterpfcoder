@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     private int  Score;
-    public enum typesFood {Apple , Watermelon, Peach, Gold};
+    public enum typesFood {Apple, Watermelon, Peach, Gold};
     public static event Action<int> onPointsInScreen;
     private void Awake()
     {
